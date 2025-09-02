@@ -1,0 +1,74 @@
+A free, open-source, and privacy-focused web application that helps you visualize the benefits of quitting smoking. Track your financial savings, health improvements, and personal achievements—all in one place.
+✨ Features
+💰 Financial Tracker: See exactly how much money you've saved since quitting.
+
+❤️ Health Timeline: Visualize your body's recovery with a detailed health milestone timeline.
+
+🏆 Achievement Badges: Earn fun badges to celebrate your willpower and milestones.
+
+🎉 Milestone Celebrations: Get motivated with confetti animations for major achievements.
+
+💡 Craving Tips: Get personalized, practical advice for managing cravings.
+
+💾 Local Storage: Your progress is automatically saved on your device. No login required.
+
+📤 Social Sharing: Share your success with friends and family to inspire them.
+
+🛡️ 100% Private: All data stays on your device. No ads, no tracking, no subscriptions.
+
+🚀 Getting Started
+Using the Calculator
+Visit the Live Demo.
+
+Enter your smoking habits (cigarettes per day, years smoked, price per pack).
+
+Select your quit date.
+
+Click "Calculate My Progress" and watch your results appear!
+
+For Developers: Running Locally
+Want to run this project on your own machine? It's easy!
+
+Clone the repository:
+
+bash
+git clone https://github.com/your-username/your-repo-name.git
+Navigate to the project directory:
+
+bash
+cd your-repo-name
+Open the main file:
+Simply open the index.html file in your web browser. That's it! No complex build processes.
+
+🛠️ Built With
+HTML5 - The structure of the web page.
+
+CSS3 & TailwindCSS - For modern and responsive styling.
+
+Vanilla JavaScript - For all the logic and interactivity.
+
+Canvas Confetti - For the fun celebration effects.
+
+Font Awesome - For the beautiful icons.
+
+🤝 Contributing
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+
+Fork the Project
+
+Create your Feature Branch (git checkout -b feature/AmazingFeature)
+
+Commit your Changes (git commit -m 'Add some AmazingFeature')
+
+Push to the Branch (git push origin feature/AmazingFeature)
+
+Open a Pull Request
+
+See CONTRIBUTING.md for detailed guidelines.
+
+📜 License
+This project is distributed under the MIT License. See the LICENSE file for more information. This means you can use, copy, modify, and distribute the code for free, even for commercial purposes.
+
+🫀 Motivation
+This project was built to provide a free, accessible, and empowering alternative to premium quit-smoking apps. Your health journey shouldn't have a subscription fee.
+
