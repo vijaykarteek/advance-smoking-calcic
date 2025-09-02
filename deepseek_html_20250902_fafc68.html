@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Quit Smoking Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tab-button.active {
+            background: linear-gradient(135deg, #3B82F6, #10B981);
+            color: white;
+        }
+        .progress-bar {
+            transition: width 2s ease-in-out;
+        }
+        .badge {
+            animation: pop 0.5s ease-in-out;
+        }
+        @keyframes pop {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-green-50 min-h-screen p-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-blue-600 to-green-600 text-white p-6 text-center">
+                <h1 class="text-3xl font-bold mb-2"><i class="fas fa-smoking-ban mr-2"></i>Quit Smoking Calculator</h1>
+                <p class="text-blue-100">Track your progress, health gains, and savings</p>
+            </div>
+
+            <!-- Progress Summary -->
+            <div id="progress-summary" class="p-4 bg-gray-50 hidden">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-green-600" id="summary-days">0</div>
+                        <div class="text-sm text-gray-600">Days Clean</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-blue-600" id="summary-savings">₹0</div>
+                        <div class="text-sm text-gray-600">Total Saved</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-purple-600" id="summary-health">0</div>
+                        <div class="text-sm text-gray-600">Health Score</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Calculator -->
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Your Smoking Profile</h2>
+                
+                <div class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Cigarettes per day</label>
+                                <input type="number" id="cigarettesPerDay" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., 20" min="1" max="100">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Years smoked</label>
+                                <input type="number" id="yearsSmoked" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., 10" min="1" max="60">
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Price per pack (₹)</label>
+                                <input type="number" id="pricePerPack" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., 250" min="1" step="10">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Quit date</label>
+                                <input type="date" id="quitDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="calculateResults()" class="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-green-700 transition-all duration-200 transform hover:scale-105">
+                        <i class="fas fa-calculator mr-2"></i>Calculate My Progress
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" class="hidden p-6 bg-gray-50">
+                <div class="space-y-8">
+                    <!-- Milestone Celebration -->
+                    <div id="milestone-alert" class="hidden bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-lg text-center">
+                        <i class="fas fa-trophy text-2xl mb-2"></i>
+                        <h3 class="font-bold text-lg" id="milestone-title">Congratulations!</h3>
+                        <p id="milestone-message">You've reached an important milestone!</p>
+                    </div>
+
+                    <!-- Health Timeline -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4"><i class="fas fa-heartbeat mr-2 text-red-500"></i>Health Recovery Timeline</h3>
+                        <div class="space-y-4" id="health-timeline">
+                            <!-- Timeline will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4"><i class="fas fa-medal mr-2 text-yellow-500"></i>Your Achievements</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="achievements-container">
+                            <!-- Badges will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Craving Tips -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4"><i class="fas fa-lightbulb mr-2 text-orange-500"></i>Personalized Tips</h3>
+                        <div id="craving-tips">
+                            <!-- Tips will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Share Buttons -->
+                    <div class="text-center">
+                        <p class="text-gray-600 mb-4">Proud of your progress? Share it!</p>
+                        <div class="space-x-4">
+                            <button onclick="shareResults('twitter')" class="bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
+                                <i class="fab fa-twitter mr-2"></i>Twitter
+                            </button>
+                            <button onclick="shareResults('whatsapp')" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                                <i class="fab fa-whatsapp mr-2"></i>WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize with current date
+        document.getElementById('quitDate').valueAsDate = new Date();
+        
+        // Milestone data
+        const milestones = [
+            { days: 1, title: "First Day!", message: "The hardest day is behind you!", health: "20 mins: Blood pressure drops" },
+            { days: 7, title: "One Week!", message: "You've saved ₹{savings} already!", health: "1 week: Nicotine eliminated" },
+            { days: 30, title: "One Month!", message: "Amazing willpower! Keep going!", health: "1 month: Lung function improves" },
+            { days: 90, title: "Three Months!", message: "You're a non-smoker now!", health: "3 months: Circulation improves" }
+        ];
+
+        // Achievement badges
+        const achievements = [
+            { id: 'first_day', name: 'First Step', icon: '🚭', description: 'Completed first day without smoking' },
+            { id: 'money_saver', name: 'Money Saver', icon: '💰', description: 'Saved ₹1000' },
+            { id: 'health_hero', name: 'Health Hero', icon: '🏥', description: 'Reached 7 days smoke-free' },
+            { id: 'willpower_wizard', name: 'Willpower Wizard', icon: '🧙', description: '30 days of resistance' }
+        ];
+
+        // Health timeline data
+        const healthTimeline = [
+            { time: "20 minutes", benefit: "Heart rate and blood pressure drop to normal" },
+            { time: "12 hours", benefit: "Carbon monoxide level in your blood drops to normal" },
+            { time: "2 weeks", benefit: "Circulation improves and lung function increases" },
+            { time: "1 month", benefit: "Coughing and shortness of breath decrease" },
+            { time: "1 year", benefit: "Risk of coronary heart disease is half that of a smoker" },
+            { time: "5 years", benefit: "Risk of stroke is reduced to that of a non-smoker" }
+        ];
+
+        function calculateResults() {
+            const cigarettesPerDay = parseFloat(document.getElementById('cigarettesPerDay').value) || 0;
+            const yearsSmoked = parseFloat(document.getElementById('yearsSmoked').value) || 0;
+            const pricePerPack = parseFloat(document.getElementById('pricePerPack').value) || 0;
+            
+            if (!cigarettesPerDay || !yearsSmoked || !pricePerPack) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            const quitDate = new Date(document.getElementById('quitDate').value);
+            const today = new Date();
+            const daysSinceQuit = Math.max(0, Math.floor((today - quitDate) / (1000 * 60 * 60 * 24)));
+            
+            // Calculations
+            const cigarettesPerPack = 20;
+            const dailyCost = (cigarettesPerDay / cigarettesPerPack) * pricePerPack;
+            const totalSaved = dailyCost * daysSinceQuit;
+            const cigarettesAvoided = cigarettesPerDay * daysSinceQuit;
+            const lifeMinutesRegained = cigarettesAvoided * 11;
+            const lifeDaysRegained = (lifeMinutesRegained / 60 / 24).toFixed(1);
+
+            // Save to local storage
+            const userData = {
+                cigarettesPerDay,
+                yearsSmoked,
+                pricePerPack,
+                quitDate: quitDate.toISOString(),
+                daysSinceQuit,
+                totalSaved,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('quitSmokingData', JSON.stringify(userData));
+
+            // Update UI
+            showResults(daysSinceQuit, totalSaved, cigarettesAvoided, lifeDaysRegained);
+            checkMilestones(daysSinceQuit, totalSaved);
+            updateHealthTimeline();
+            updateAchievements(daysSinceQuit, totalSaved);
+            showCravingTips();
+        }
+
+        function showResults(days, savings, cigarettes, lifeDays) {
+            document.getElementById('progress-summary').classList.remove('hidden');
+            document.getElementById('results').classList.remove('hidden');
+            
+            document.getElementById('summary-days').textContent = days;
+            document.getElementById('summary-savings').textContent = '₹' + Math.round(savings);
+            document.getElementById('summary-health').textContent = Math.min(100, days * 2);
+            
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function checkMilestones(days, savings) {
+            const milestone = milestones.find(m => m.days === days);
+            if (milestone) {
+                const alert = document.getElementById('milestone-alert');
+                alert.classList.remove('hidden');
+                document.getElementById('milestone-title').textContent = milestone.title;
+                document.getElementById('milestone-message').textContent = 
+                    milestone.message.replace('{savings}', Math.round(savings));
+                
+                // Celebrate with confetti!
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function updateHealthTimeline() {
+            const container = document.getElementById('health-timeline');
+            container.innerHTML = healthTimeline.map(item => `
+                <div class="flex items-start space-x-3">
+                    <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div>
+                        <div class="font-semibold text-green-800">${item.time}</div>
+                        <div class="text-green-700">${item.benefit}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateAchievements(days, savings) {
+            const container = document.getElementById('achievements-container');
+            const earned = achievements.filter(a => {
+                if (a.id === 'first_day') return days >= 1;
+                if (a.id === 'money_saver') return savings >= 1000;
+                if (a.id === 'health_hero') return days >= 7;
+                if (a.id === 'willpower_wizard') return days >= 30;
+                return false;
+            });
+
+            container.innerHTML = earned.map(achievement => `
+                <div class="text-center p-3 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-lg border border-yellow-200 badge">
+                    <div class="text-2xl mb-1">${achievement.icon}</div>
+                    <div class="font-semibold text-yellow-800 text-sm">${achievement.name}</div>
+                    <div class="text-yellow-600 text-xs">${achievement.description}</div>
+                </div>
+            `).join('');
+        }
+
+        function showCravingTips() {
+            const tips = [
+                "💧 Drink a glass of water when cravings hit",
+                "🚶 Take a 5-minute walk to distract yourself",
+                "🎵 Listen to your favorite music",
+                "🧘 Practice deep breathing for 2 minutes",
+                "📞 Call a supportive friend or family member"
+            ];
+            
+            const container = document.getElementById('craving-tips');
+            container.innerHTML = tips.map(tip => `
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div class="text-blue-800">${tip}</div>
+                </div>
+            `).join('');
+        }
+
+        function shareResults(platform) {
+            const days = document.getElementById('summary-days').textContent;
+            const savings = document.getElementById('summary-savings').textContent;
+            
+            let url = '';
+            const text = `I've been smoke-free for ${days} days and saved ${savings} with the Quit Smoking Calculator!`;
+            
+            if (platform === 'twitter') {
+                url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+            } else if (platform === 'whatsapp') {
+                url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            }
+            
+            window.open(url, '_blank');
+        }
+
+        // Load saved data on page load
+        window.addEventListener('load', function() {
+            const savedData = localStorage.getItem('quitSmokingData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                document.getElementById('cigarettesPerDay').value = data.cigarettesPerDay;
+                document.getElementById('yearsSmoked').value = data.yearsSmoked;
+                document.getElementById('pricePerPack').value = data.pricePerPack;
+                document.getElementById('quitDate').value = new Date(data.quitDate).toISOString().split('T')[0];
+                
+                // Recalculate if quit date has passed
+                const today = new Date();
+                const quitDate = new Date(data.quitDate);
+                if (today > quitDate) {
+                    calculateResults();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
